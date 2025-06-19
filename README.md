@@ -19,6 +19,14 @@ A fully functional, real-time chat application built with the **MERN stack**, **
 
 ---
 
+![alt text](frontend/public/image.png)
+
+![alt text](frontend/public/image2.png)
+
+![alt text](frontend/public/image3.png)
+
+![alt text](frontend/public/image4.png)
+
 ## 🧭 Pages Overview
 
 | Page               | Path            | Description |
@@ -34,5 +42,76 @@ A fully functional, real-time chat application built with the **MERN stack**, **
 
 ---
 
+## ⚙️ Environment Configuration
+
+Create a `.env` file in the `backend/` directory:
+
+```env
+MONGODB_URI=your_mongodb_connection_string
+PORT=5001
+JWT_SECRET=your_jwt_secret
+
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+NODE_ENV=development
+
+
+#!/bin/bash
+
+echo "🚀 Starting setup for Full Stack Realtime Chat App..."
+
+# Step 1: Clone the repository (optional, if not already cloned)
+# echo "📦 Cloning repository..."
+# git clone https://github.com/your-username/fullstack-chat-app.git
+# cd fullstack-chat-app
+
+# Step 2: Install backend dependencies
+echo "📁 Installing backend dependencies..."
+cd backend
+npm install
+
+# Step 3: Create .env file if it doesn't exist
+if [ ! -f ".env" ]; then
+  echo "⚙️ Creating backend .env file..."
+  cat <<EOF > .env
+MONGODB_URI=your_mongodb_connection_string
+PORT=5001
+JWT_SECRET=your_jwt_secret
+
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+NODE_ENV=development
+EOF
+  echo "✅ .env file created. Please update it with real credentials."
+else
+  echo "✅ .env file already exists."
+fi
+
+# Step 4: Start backend server
+echo "🚀 Starting backend server..."
+npm run dev &
+BACKEND_PID=$!
+cd ..
+
+# Step 5: Install frontend dependencies
+echo "📁 Installing frontend dependencies..."
+cd frontend
+npm install
+
+# Step 6: Start frontend server
+echo "🚀 Starting frontend server..."
+npm run dev &
+FRONTEND_PID=$!
+
+# Summary
+echo "🎉 Setup complete!"
+echo "👉 Backend running on http://localhost:5001"
+
+# Optional: Wait for both servers to keep the script open
+wait $BACKEND_PID $FRONTEND_PID
 
 
