@@ -80,3 +80,35 @@ export const sendMessage = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+export const markMessagesAsRead = async (req, res) => {
+  const receiverId = req.user._id;
+  const senderId = req.params.senderId;
+
+  await Message.updateMany(
+    { senderId, receiverId, isRead: false },
+    { isRead: true, readAt: new Date() }
+  );
+
+  res.status(200).json({ message: "Messages marked as read" });
+};
+
+export const deleteMessage = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const userId = req.user._id;
+
+    const message = await Message.findById(messageId);
+    if (!message) return res.status(404).json({ message: "Message not found" });
+
+    if (message.senderId.toString() !== userId.toString()) {
+      return res.status(403).json({ message: "You can only delete your own messages" });
+    }
+
+    await Message.findByIdAndDelete(messageId);
+    res.status(200).json({ message: "Message deleted successfully" });
+  } catch (err) {
+    console.error("Delete message error:", err);
+    res.status(500).json({ message: "Server error while deleting message" });
+  }
+};

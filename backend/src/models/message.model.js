@@ -18,8 +18,17 @@ const messageSchema = new mongoose.Schema(
     image: {
       type: String,
     },
+    isRead: {
+      type: Boolean,
+      default: false,
+    },
+    readAt: {
+      type: Date,
+    },
   },
-  { timestamps: true }
+  {
+    timestamps: true, // adds createdAt and updatedAt automatically
+  }
 );
 
 const Message = mongoose.model("Message", messageSchema);

@@ -33,6 +33,7 @@ export const useChatStore = create((set, get) => ({
       set({ isMessagesLoading: false });
     }
   },
+
   sendMessage: async (messageData) => {
     const { selectedUser, messages } = get();
     try {
@@ -65,4 +66,14 @@ export const useChatStore = create((set, get) => ({
   },
 
   setSelectedUser: (selectedUser) => set({ selectedUser }),
+
+  // 🔍 NEW: Search users by name
+  searchUsers: async (searchTerm) => {
+    try {
+      const res = await axiosInstance.get(`/auth/search?name=${searchTerm}`);
+      set({ users: res.data });
+    } catch (error) {
+      toast.error(error?.response?.data?.message || "Failed to search users");
+    }
+  },
 }));
