@@ -56,22 +56,25 @@ const SignUpPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const isValid = validateForm();
-    if (!isValid) return;
+
+    if (!validateForm()) return;
 
     setIsSigningUp(true);
     try {
-      const res = await axios.post("http://localhost:5001/api/auth/signup", formData, {
+      await axios.post("http://localhost:5001/api/auth/signup", formData, {
         withCredentials: true,
       });
 
       toast.success("Account created successfully");
       navigate("/login");
     } catch (error) {
-      if (error.response?.status === 409) {
+      const status = error?.response?.status;
+      const message = error?.response?.data?.message;
+
+      if (status === 409) {
         toast.error("Email already exists");
-      } else if (error.response?.data?.message) {
-        toast.error(error.response.data.message);
+      } else if (message) {
+        toast.error(message);
       } else {
         toast.error("Something went wrong");
       }
