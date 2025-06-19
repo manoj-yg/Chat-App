@@ -42,9 +42,9 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: false, // true if using HTTPS in production
+      secure: true, // true if using HTTPS in production
       httpOnly: true,
-      sameSite: "Lax", // or "None" if using HTTPS and cross-site
+      sameSite: "None", // or "None" if using HTTPS and cross-site
     },
   })
 );
