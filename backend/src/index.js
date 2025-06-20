@@ -6,7 +6,7 @@ import path from "path";
 import session from "express-session";
 import passport from "passport";
 import { connectDB } from "./lib/db.js";
-
+import helmet from "helmet";// clickjacking protection
 import authRoutes from "./routes/auth.route.js";
 import messageRoutes from "./routes/message.route.js";
 import { app, server } from "./lib/socket.js";
@@ -25,6 +25,8 @@ connectDB();
 // -------------------------
 app.use(express.json());
 app.use(cookieParser());
+// clickjacking protection
+app.use(helmet.frameguard({ action: "deny" }));
 
 app.use(
   cors({
