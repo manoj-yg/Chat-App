@@ -8,27 +8,50 @@ export const signup = async (req, res) => {
   const { fullName, email, password } = req.body;
 
   try {
+    // Check for required fields
     if (!fullName || !email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters" });
+    // Validate email format
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({ message: "Invalid email format" });
     }
 
+    // Validate strong password: min 8 chars, upper, lower, number, special char
+    const passwordRegex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_\-+=<>])[A-Za-z\d@$!%*?&#^()_\-+=<>]{8,}$/;
+
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        message:
+          "Password must be at least 8 characters and include uppercase, lowercase, number, and special character",
+      });
+    }
+
+    // Check for existing user
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(409).json({ message: "Email already exists" });
     }
 
+    // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = new User({ fullName, email, password: hashedPassword });
+    // Create user
+    const newUser = new User({
+      fullName,
+      email,
+      password: hashedPassword,
+    });
 
-    generateToken(newUser._id, res);
+    // Save and generate token
     await newUser.save();
+    generateToken(newUser._id, res); // sets HTTP-only cookie
 
+    // Respond with user info (do not include password)
     res.status(201).json({
       _id: newUser._id,
       fullName: newUser.fullName,
@@ -40,6 +63,7 @@ export const signup = async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 
 // LOGIN
 export const login = async (req, res) => {

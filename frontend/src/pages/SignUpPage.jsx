@@ -38,13 +38,13 @@ const SignUpPage = () => {
       return false;
     }
 
-    if (password.length < 7) {
-      toast.error("Password must be at least 7 characters long");
+    if (password.length < 8) {
+      toast.error("Password must be at least 8 characters long");
       return false;
     }
 
     const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_\-+=<>])[A-Za-z\d@$!%*?&#^()_\-+=<>]{7,}$/;
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_\-+=<>])[A-Za-z\d@$!%*?&#^()_\-+=<>]{8,}$/;
 
     if (!passwordRegex.test(password)) {
       toast.error("Password must include uppercase, lowercase, number, and special character");

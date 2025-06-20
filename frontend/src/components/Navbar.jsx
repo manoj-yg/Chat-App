@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuthStore } from "../store/useAuthStore";
 import { LogOut, MessageSquare, Settings, User, Search } from "lucide-react";
 import debounce from "lodash.debounce";
@@ -12,6 +12,9 @@ const Navbar = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const hideSearch = ["/login", "/signup"].includes(location.pathname);
 
   // Debounced search
   const handleSearch = debounce(async (term) => {
@@ -22,7 +25,7 @@ const Navbar = () => {
 
   useEffect(() => {
     handleSearch(searchTerm);
-  }, [searchTerm]);
+  }, [handleSearch, searchTerm]);
 
   const handleUserClick = (user) => {
     setSelectedUser(user); // Set the selected user in Zustand
@@ -40,41 +43,43 @@ const Navbar = () => {
             <div className="size-9 rounded-lg bg-primary/10 flex items-center justify-center">
               <MessageSquare className="w-5 h-5 text-primary" />
             </div>
-            <h1 className="text-lg font-bold">MessageApp</h1>
+            <h1 className="text-lg font-bold">CrypTalk</h1>
           </Link>
 
-          {/* Search */}
-          <div className="relative w-64">
-            <div className="flex items-center border rounded-md bg-base-200 px-2">
-              <Search className="w-4 h-4 text-base-content/60" />
-              <input
-                type="text"
-                placeholder="Search users..."
-                className="input input-sm bg-transparent border-none w-full focus:outline-none"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
+          {/* Search (hidden on login and signup) */}
+          {!hideSearch && (
+            <div className="relative w-64">
+              <div className="flex items-center border rounded-md bg-base-200 px-2">
+                <Search className="w-4 h-4 text-base-content/60" />
+                <input
+                  type="text"
+                  placeholder="Search users..."
+                  className="input input-sm bg-transparent border-none w-full focus:outline-none"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
 
-            {showDropdown && users.length > 0 && (
-              <ul className="absolute z-50 mt-2 bg-base-100 border rounded-lg shadow w-full max-h-60 overflow-y-auto">
-                {users.map((user) => (
-                  <li
-                    key={user._id}
-                    className="p-2 flex items-center gap-3 hover:bg-base-200 cursor-pointer"
-                    onClick={() => handleUserClick(user)}
-                  >
-                    <img
-                      src={user.profilePic || "/avatar.png"}
-                      alt={user.fullName}
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                    <span className="text-sm">{user.fullName}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+              {showDropdown && users.length > 0 && (
+                <ul className="absolute z-50 mt-2 bg-base-100 border rounded-lg shadow w-full max-h-60 overflow-y-auto">
+                  {users.map((user) => (
+                    <li
+                      key={user._id}
+                      className="p-2 flex items-center gap-3 hover:bg-base-200 cursor-pointer"
+                      onClick={() => handleUserClick(user)}
+                    >
+                      <img
+                        src={user.profilePic || "/avatar.png"}
+                        alt={user.fullName}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                      <span className="text-sm">{user.fullName}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
 
           {/* Buttons */}
           <div className="flex items-center gap-2">
